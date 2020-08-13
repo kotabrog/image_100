@@ -12,7 +12,7 @@
 - クローンしてライブラリ化
 
 ```bash
-git clone https://github.com/kotabrog/image_100.git image_100
+git clone https://github.com/kotabrog/image_100.git
 cd image_100
 python setup.py sdist
 ```
