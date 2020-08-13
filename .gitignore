@@ -1,0 +1,4 @@
+**/__pycache__
+dist/
+image_100.egg-info/
+.ipynb_checkpoints/
