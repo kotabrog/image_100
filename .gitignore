@@ -2,3 +2,4 @@
 dist/
 image_100.egg-info/
 .ipynb_checkpoints/
+notebook/q*
