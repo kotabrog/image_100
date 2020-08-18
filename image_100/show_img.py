@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-# show two image
+# show two images
 
 def show_img_origin_and_conversion(img1, img2, cmap = 'viridis'):
 	plt.figure(figsize=(12, 3))
