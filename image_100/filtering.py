@@ -39,3 +39,36 @@ def max_pooling(img, block_size=(8, 8)):
 				img[i: min(i + block_size[0], img_h),
 				j: min(j + block_size[1], img_w), k])
 	return return_img[:img_h, :img_w, :img_c]
+
+# Gaussian filter
+
+def gaussian_filter(img, kernel=(3, 3), sigma=1.3):
+
+	def two_dimensional_gaussian(index=(0, 0), sigma=1.3):
+		x = index[0]
+		y = index[1]
+		return 1 / (2 * np.pi * sigma * sigma) *\
+				np.exp(-(index[0] ** 2 + index[1] ** 2) / (2 * sigma ** 2))
+
+	half_kernel_h = kernel[0] // 2
+	half_kernel_w = kernel[1] // 2
+	half_under_h = (kernel[0] - 1) // 2
+	half_right_w = (kernel[1] - 1) // 2
+	half_adjust_h = 0 if kernel[0] % 2 else 0.5
+	half_adjust_w = 0 if kernel[1] % 2 else 0.5
+	gaussian_filter =\
+		[[two_dimensional_gaussian(
+			(i - half_kernel_h + half_adjust_h, 
+			j - half_kernel_w + half_adjust_w))
+		for j in range(kernel[1])]
+		for i in range(kernel[0])]
+	gaussian_filter = gaussian_filter / np.sum(gaussian_filter)
+
+	pad_img = np.pad(img, [(half_kernel_h, half_under_h), 
+							(half_kernel_w, half_right_w), (0, 0)], 'reflect') 
+	pad_img = np.array([[[np.sum(gaussian_filter * 
+							pad_img[i: i + kernel[0], j: j + kernel[1], k])
+							for k in range(3)]
+							for j in range(img.shape[1])]
+							for i in range(img.shape[0])])
+	return np.round(pad_img[: img.shape[0], : img.shape[1], :]).astype('uint8')
