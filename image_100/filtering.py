@@ -71,4 +71,21 @@ def gaussian_filter(img, kernel=(3, 3), sigma=1.3):
 							for k in range(3)]
 							for j in range(img.shape[1])]
 							for i in range(img.shape[0])])
-	return np.round(pad_img[: img.shape[0], : img.shape[1], :]).astype('uint8')
+	return np.round(pad_img).astype('uint8')
+
+# Median filter
+
+def median_filter(img, kernel=(3, 3)):
+	half_kernel_h = kernel[0] // 2
+	half_kernel_w = kernel[1] // 2
+	half_under_h = (kernel[0] - 1) // 2
+	half_right_w = (kernel[1] - 1) // 2
+
+	pad_img = np.pad(img, [(half_kernel_h, half_under_h), 
+							(half_kernel_w, half_right_w), (0, 0)], 'symmetric') 
+	pad_img = np.array([[[np.median(pad_img[i: i + kernel[0], 
+											j: j + kernel[1], k])
+							for k in range(3)]
+							for j in range(img.shape[1])]
+							for i in range(img.shape[0])])
+	return np.round(pad_img).astype('uint8')
