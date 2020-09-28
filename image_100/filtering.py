@@ -230,3 +230,20 @@ def sobel_filter(img, k_size=(3, 3), mode='y'):
 	pad_img -= pad_img.min()
 	pad_img /= pad_img.max()
 	return pad_img
+
+# laplacian filter
+
+def laplacian_filter(img):
+	if len(img.shape) == 3:
+		_img = rgb_to_gray(img)
+	else:
+		_img = img
+	l_filter = np.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]], dtype=float)
+	pad_img = np.pad(_img, (1, 1), 'reflect')
+	pad_img = np.array([[np.sum(l_filter * 
+							pad_img[i: i + 3, j: j + 3])
+							for j in range(img.shape[1])]
+							for i in range(img.shape[0])])
+	pad_img -= pad_img.min()
+	pad_img /= pad_img.max()
+	return pad_img
