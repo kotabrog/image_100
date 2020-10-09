@@ -264,3 +264,43 @@ def emboss_filter(img):
 	pad_img -= pad_img.min()
 	pad_img /= pad_img.max()
 	return pad_img
+
+# LoG filter
+
+def LoG_filter(img, kernel=(3, 3), sigma=1.3):
+
+	def two_dimensional_LoG(index=(0, 0), sigma=1.3):
+		x = index[0]
+		y = index[1]
+		x2 = x ** 2
+		y2 = y ** 2
+		v = sigma ** 2
+		e = np.exp(-(x2 + y2) / (2 * v))
+		return (x2 + y2 - 2 * v) * e / (2 * np.pi * v ** 3) 
+
+	if len(img.shape) == 3:
+		_img = rgb_to_gray(img)
+	else:
+		_img = img
+
+	half_kernel_h = kernel[0] // 2
+	half_kernel_w = kernel[1] // 2
+	half_under_h = (kernel[0] - 1) // 2
+	half_right_w = (kernel[1] - 1) // 2
+	half_adjust_h = 0 if kernel[0] % 2 else 0.5
+	half_adjust_w = 0 if kernel[1] % 2 else 0.5
+	lg_filter =\
+		[[two_dimensional_LoG(
+			(i - half_kernel_h + half_adjust_h, 
+			j - half_kernel_w + half_adjust_w))
+		for j in range(kernel[1])]
+		for i in range(kernel[0])]
+	lg_filter = lg_filter / np.sum(lg_filter)
+
+	pad_img = np.pad(_img, [(half_kernel_h, half_under_h), 
+							(half_kernel_w, half_right_w)], 'reflect')
+	pad_img = np.array([[np.sum(lg_filter * 
+							pad_img[i: i + kernel[0], j: j + kernel[1]])
+							for j in range(img.shape[1])]
+							for i in range(img.shape[0])])
+	return np.clip(np.round(pad_img), 0, 255).astype('uint8')
